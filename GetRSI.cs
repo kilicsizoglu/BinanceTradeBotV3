@@ -12,12 +12,12 @@ namespace tradebot
         {
             string coinName = "";
 
-            if (CoinName == "1000SHIBUSDT")
-                coinName = "Shiba Inu";
             if (CoinName == "GALAUSDT")
                 coinName = "Gala";
-            if (CoinName == "DOGEUSDT")
-                coinName = "Dogecoin";
+            if (CoinName == "ASTRUSDT")
+                coinName = "Astar";
+            if (CoinName == "CHZUSDT")
+                coinName = "Chiliz";
 
             var Context = new TradeBotDbContext();
             List<decimal> lowPrice = new List<decimal>();
@@ -26,7 +26,7 @@ namespace tradebot
             if (Context != null)
             {
                 var time = DateTime.Now;
-                time = time.AddMinutes(-15);
+                time = time.AddMinutes(-5);
                 Context.Currencies.Where(x => x.name == coinName).ToList().Where(x => x.date < time).ToList().ForEach(x =>
                 {
                     if (x.price != null)
@@ -60,7 +60,10 @@ namespace tradebot
                         lowAvg += x - priceBackup;
                         priceBackup = x;
                     });
-                    lowAvg = lowAvg / lowPrice.Count;
+                    if (lowPrice.Count != 0)
+                    {
+                        lowAvg = lowAvg / lowPrice.Count;
+                    }
                     decimal highAvg = 0;
                     priceBackup = 0;
                     highPrice.ForEach(x =>
@@ -68,7 +71,14 @@ namespace tradebot
                         highAvg += x - priceBackup;
                         priceBackup = x;
                     });
-                    highAvg = highAvg / highPrice.Count;
+                    if (highPrice.Count != 0)
+                    {
+                        highAvg = highAvg / highPrice.Count;
+                    }
+                    if (lowAvg == 0)
+                        lowAvg = 1;
+                    if (highAvg == 0)
+                        highAvg = 1;
                     decimal rs = highAvg / lowAvg;
                     decimal rsi = 100 - (100 / (1 + rs));
                     Console.WriteLine(coinName + " " + rsi);

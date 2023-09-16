@@ -1,6 +1,8 @@
 using Binance.Net.Clients;
 using Binance.Net.Enums;
+using Binance.Net.Objects.Models.Futures;
 using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Objects;
 using tradebot;
 
 public class Buy
@@ -20,38 +22,79 @@ public class Buy
     }
     public async Task ExecuteAsync(String coin, decimal rsi)
     {
-        string coinName = "";
-
-        if (coin == "1000SHIBUSDT")
-            coinName = "Shiba Inu";
-        if (coin == "GALAUSDT")
-            coinName = "Gala";
-        if (coin == "DOGEUSDT")
-            coinName = "Dogecoin";
-
-        if (coin != "")
+        if (rsi != 0)
         {
+            string coinName = "";
 
-            if (binanceRestClient != null)
+            if (coin == "BTCUSDT")
+                coinName = "Bitcoin";
+            if (coin == "ETHUSDT")
+                coinName = "Ethereum";
+            if (coin == "BNBUSDT")
+                coinName = "BNB";
+
+            if (coin != "")
             {
-                try
+
+                if (binanceRestClient != null)
                 {
-                    decimal price =  GetPrice.GetCoinPrice(coinName);
-                    decimal quantity = Math.Round(10 / price);
-                    var res = await binanceRestClient.UsdFuturesApi.Trading.PlaceOrderAsync(
-                        coin,
-                        OrderSide.Buy,
-                        FuturesOrderType.Limit,
-                        quantity,
-                        Math.Round(price, 6),
-                        timeInForce: TimeInForce.FillOrKill
-                    );
-                    Console.WriteLine(res.ToString());
-                    Console.WriteLine("Buy " + coinName + " " + price);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
+                    try
+                    {
+                        WebCallResult<BinanceFuturesPlacedOrder> res;
+                        if (coin == "BTCUSDT")
+                        {
+                            decimal price = GetPrice.GetCoinPrice(coinName);
+                            decimal quantity = 0.1m;
+                            res = await binanceRestClient.UsdFuturesApi.Trading.PlaceOrderAsync(
+                                coin,
+                                OrderSide.Buy,
+                                FuturesOrderType.Limit,
+                                quantity,
+                                Math.Round(price),
+                                timeInForce: TimeInForce.FillOrKill
+                            );
+                            Console.WriteLine(res.ToString());
+                            Console.WriteLine("Buy " + coinName + " " + price);
+                        }
+                        if (coin == "ETHUSDT")
+                        {
+                            decimal price = GetPrice.GetCoinPrice(coinName);
+                            decimal quantity = 0.18m;
+                            res = await binanceRestClient.UsdFuturesApi.Trading.PlaceOrderAsync(
+                                coin,
+                                OrderSide.Buy,
+                                FuturesOrderType.Limit,
+                                quantity,
+                                Math.Round(price),
+                                timeInForce: TimeInForce.FillOrKill
+                            );
+                            Console.WriteLine(res.ToString());
+                            Console.WriteLine("Buy " + coinName + " " + price);
+                        }
+                        if (coin == "BNBUSDT")
+                        {
+                            decimal price = GetPrice.GetCoinPrice(coinName);
+                            decimal quantity = 1.4m;
+                            res = await binanceRestClient.UsdFuturesApi.Trading.PlaceOrderAsync(
+                                coin,
+                                OrderSide.Buy,
+                                FuturesOrderType.Limit,
+                                quantity,
+                                Math.Round(price),
+                                timeInForce: TimeInForce.FillOrKill
+                            );
+                            Console.WriteLine(res.ToString());
+                            Console.WriteLine("Buy " + coinName + " " + price);
+                        }
+                        if (coin == "BTCUSDT" || coin == "ETHUSDT" || coin == "BNBUSDT")
+                        {
+                            SaveOrder.SaveOrderData(coin, rsi);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
             }
         }

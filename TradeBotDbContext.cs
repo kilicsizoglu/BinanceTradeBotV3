@@ -12,4 +12,5 @@ public class TradeBotDbContext : DbContext
     }
     
     public DbSet<Crypto> Currencies { get; set; }
+    public DbSet<SaveOrderTable> Orders { get; set; }
 }
